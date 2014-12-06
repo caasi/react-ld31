@@ -95,21 +95,20 @@ body {
 }
 body {
   background: #16161d;
+  font-family: monospace;
 }
-.app {
+body .container {
+  position: relative;
+}
+.card {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 200px;
-  height: 120px;
-  line-height: 120px;
-  margin: auto;
-  padding: 10px 20px;
+  width: 100px;
+  height: 160px;
+  line-height: 160px;
+  font-size: 50px;
+  font-weight: bold;
   text-align: center;
-  color: #fff;
+  background-color: #fff;
   -webkit-border-radius: 10px;
   border-radius: 10px;
-  cursor: pointer;
 }

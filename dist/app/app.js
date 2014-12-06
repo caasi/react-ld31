@@ -1,7 +1,7 @@
 (function(){
-  var React, div, App;
+  var React, Card, App;
   React = require('react');
-  div = React.DOM.div;
+  Card = React.createFactory(require('./Card'));
   App = React.createClass({
     displayName: 'React.App',
     getInitialState: function(){
@@ -10,18 +10,12 @@
       };
     },
     render: function(){
-      var this$ = this;
-      return div({
-        className: 'app',
-        style: {
-          background: this.state.color
-        },
-        onClick: function(){
-          return this$.setState({
-            color: this$.state.color === 'red' ? 'green' : 'red'
-          });
+      return Card({
+        position: {
+          x: 100,
+          y: 100
         }
-      }, 'click me');
+      });
     }
   });
   module.exports = App;
