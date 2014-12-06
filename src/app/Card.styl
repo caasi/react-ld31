@@ -1,7 +1,8 @@
 card-width  = 100px
-card-height = 160px
+card-height = 140px
 
 .card
+  cursor pointer
   position absolute
   width  card-width
   height card-height
@@ -10,4 +11,9 @@ card-height = 160px
   font-weight bold
   text-align center
   background-color #fff
+  color #000
   border-radius 10px
+  &.hover
+    pointer-events none
+    color #f00
+    z-index 1

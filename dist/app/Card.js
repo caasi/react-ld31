@@ -10,15 +10,20 @@
           x: 0,
           y: 0
         },
-        hover: false
+        hover: false,
+        onClick: function(){}
       };
     },
     render: function(){
+      var this$ = this;
       return div({
         className: "card " + (this.props.hover ? 'hover' : ''),
         style: {
           left: this.props.position.x,
           top: this.props.position.y
+        },
+        onClick: function(){
+          return this$.props.onClick.apply(this$, arguments);
         }
       }, this.props.value);
     }

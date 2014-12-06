@@ -101,14 +101,20 @@ body .container {
   position: relative;
 }
 .card {
+  cursor: pointer;
   position: absolute;
   width: 100px;
-  height: 160px;
-  line-height: 160px;
+  height: 140px;
+  line-height: 140px;
   font-size: 50px;
   font-weight: bold;
   text-align: center;
   background-color: #fff;
-  -webkit-border-radius: 10px;
+  color: #000;
   border-radius: 10px;
+}
+.card.hover {
+  pointer-events: none;
+  color: #f00;
+  z-index: 1;
 }

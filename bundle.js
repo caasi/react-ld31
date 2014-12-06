@@ -45,7 +45,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "982aa40ab16e9ab66cfb";
+/******/ 	var hotCurrentHash = "257be866124e12e90165";
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = [];
 /******/ 	
@@ -609,11 +609,123 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	(function(){
-	  var React, App;
+	  var React, App, time, nop, move, testHover, model, stack, cards, movers, i$, i, j, tmp, app, update;
 	  React = __webpack_require__(5);
 	  App = React.createFactory(__webpack_require__(4));
 	  __webpack_require__(7);
-	  React.render(App(), document.getElementById('container'));
+	  time = 0;
+	  nop = function(card){
+	    return card;
+	  };
+	  move = function(t0, duration, bgn, end, onEnd){
+	    return function(card, t){
+	      var dt, ratio, dx, dy;
+	      dt = t - t0;
+	      if (dt >= duration) {
+	        onEnd();
+	        return {
+	          value: card.value,
+	          position: end,
+	          hover: false,
+	          onClick: card.onClick
+	        };
+	      } else {
+	        ratio = dt / duration;
+	        dx = (end.x - bgn.x) * ratio;
+	        dy = (end.y - bgn.y) * ratio;
+	        return {
+	          value: card.value,
+	          position: {
+	            x: bgn.x + dx,
+	            y: bgn.y + dy
+	          },
+	          hover: true,
+	          onClick: card.onClick
+	        };
+	      }
+	    };
+	  };
+	  testHover = function(stack){
+	    var sum, i$, len$, num, r;
+	    sum = 0;
+	    for (i$ = 0, len$ = stack.length; i$ < len$; ++i$) {
+	      num = stack[i$];
+	      sum += num;
+	    }
+	    r = sum % 9;
+	    if (r === 0) {
+	      return 9;
+	    } else {
+	      return r;
+	    }
+	  };
+	  model = {
+	    stack: [1],
+	    cards: [],
+	    movers: []
+	  };
+	  stack = model.stack, cards = model.cards, movers = model.movers;
+	  for (i$ = 0; i$ < 9; ++i$) {
+	    (fn$.call(this, i$));
+	  }
+	  for (i$ = 0; i$ < 100; ++i$) {
+	    i = Math.floor(8 * Math.random());
+	    j = i + 1;
+	    console.log(i, j);
+	    tmp = cards[i].position;
+	    cards[i].position = cards[j].position;
+	    cards[j].position = tmp;
+	  }
+	  app = React.render(App({
+	    model: model
+	  }), document.getElementById('container'));
+	  update = function(t){
+	    var i$;
+	    time = t;
+	    for (i$ = 0; i$ < 9; ++i$) {
+	      (fn$.call(this, i$));
+	    }
+	    app.setProps({
+	      model: model
+	    });
+	    return requestAnimationFrame(update);
+	    function fn$(i){
+	      var card;
+	      card = movers[i](cards[i], time);
+	      card.hover || (card.hover = card.value === testHover(stack));
+	      cards[i] = card;
+	    }
+	  };
+	  requestAnimationFrame(update);
+	  function fn$(i){
+	    var value, card;
+	    value = i + 1;
+	    card = {
+	      value: value,
+	      position: {
+	        x: 110 * i,
+	        y: 100
+	      },
+	      hover: false,
+	      onClick: function(){
+	        var card, j, another, gap;
+	        card = cards[i];
+	        j = testHover(model.stack) - 1;
+	        another = cards[j];
+	        gap = Math.abs((card.position.x - another.position.x) / 110);
+	        movers[i] = move(time, 100 * gap, card.position, another.position, function(){
+	          return movers[i] = nop;
+	        });
+	        return movers[j] = move(time, 100 * gap, another.position, card.position, function(){
+	          movers[j] = nop;
+	          stack.push(card.value);
+	          return console.log(stack);
+	        });
+	      }
+	    };
+	    cards[i] = card;
+	    movers[i] = nop;
+	  }
 	}).call(this);
 
 
@@ -686,23 +798,36 @@
 	var __HUA = (function () { var React = __webpack_require__(5); var getHotUpdateAPI = __webpack_require__(10); return getHotUpdateAPI(React, "app.js", module.id); })(); if (true) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "app.js" + ": " + err.message); } }); module.hot.dispose(function () { var nextTick = __webpack_require__(12); nextTick(__HUA.updateMountedInstances); }); }
 
 	(function(){
-	  var React, Card, App;
+	  var React, Card, div, App;
 	  React = __webpack_require__(5);
 	  Card = React.createFactory(__webpack_require__(11));
+	  div = React.DOM.div;
 	  App = __HUA.createClass({
 	    displayName: 'React.App',
+	    getDefaultProps: function(){
+	      return {
+	        model: {
+	          cards: []
+	        }
+	      };
+	    },
 	    getInitialState: function(){
 	      return {
 	        color: 'red'
 	      };
 	    },
 	    render: function(){
-	      return Card({
-	        position: {
-	          x: 100,
-	          y: 100
+	      var i, props;
+	      return div({
+	        className: 'app'
+	      }, (function(){
+	        var ref$, results$ = [];
+	        for (i in ref$ = this.props.model.cards) {
+	          props = ref$[i];
+	          results$.push(Card((props.key = i, props)));
 	        }
-	      });
+	        return results$;
+	      }.call(this)));
 	    }
 	  });
 	  module.exports = App;
@@ -751,7 +876,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(13)();
-	exports.push([module.id, "html,\nbody,\ndiv,\nspan,\napplet,\nobject,\niframe,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\np,\nblockquote,\npre,\na,\nabbr,\nacronym,\naddress,\nbig,\ncite,\ncode,\ndel,\ndfn,\nem,\nimg,\nins,\nkbd,\nq,\ns,\nsamp,\nsmall,\nstrike,\nstrong,\nsub,\nsup,\ntt,\nvar,\ndl,\ndt,\ndd,\nol,\nul,\nli,\nfieldset,\nform,\nlabel,\nlegend,\ntable,\ncaption,\ntbody,\ntfoot,\nthead,\ntr,\nth,\ntd {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  outline: 0;\n  font-weight: inherit;\n  font-style: inherit;\n  font-family: inherit;\n  font-size: 100%;\n  vertical-align: baseline;\n}\nbody {\n  line-height: 1;\n  color: #000;\n  background: #fff;\n}\nol,\nul {\n  list-style: none;\n}\ntable {\n  border-collapse: separate;\n  border-spacing: 0;\n  vertical-align: middle;\n}\ncaption,\nth,\ntd {\n  text-align: left;\n  font-weight: normal;\n  vertical-align: middle;\n}\na img {\n  border: none;\n}\nhtml,\nbody {\n  height: 100%;\n}\nbody {\n  background: #16161d;\n  font-family: monospace;\n}\nbody .container {\n  position: relative;\n}\n.card {\n  position: absolute;\n  width: 100px;\n  height: 160px;\n  line-height: 160px;\n  font-size: 50px;\n  font-weight: bold;\n  text-align: center;\n  background-color: #fff;\n  -webkit-border-radius: 10px;\n  border-radius: 10px;\n}\n", ""]);
+	exports.push([module.id, "html,\nbody,\ndiv,\nspan,\napplet,\nobject,\niframe,\nh1,\nh2,\nh3,\nh4,\nh5,\nh6,\np,\nblockquote,\npre,\na,\nabbr,\nacronym,\naddress,\nbig,\ncite,\ncode,\ndel,\ndfn,\nem,\nimg,\nins,\nkbd,\nq,\ns,\nsamp,\nsmall,\nstrike,\nstrong,\nsub,\nsup,\ntt,\nvar,\ndl,\ndt,\ndd,\nol,\nul,\nli,\nfieldset,\nform,\nlabel,\nlegend,\ntable,\ncaption,\ntbody,\ntfoot,\nthead,\ntr,\nth,\ntd {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  outline: 0;\n  font-weight: inherit;\n  font-style: inherit;\n  font-family: inherit;\n  font-size: 100%;\n  vertical-align: baseline;\n}\nbody {\n  line-height: 1;\n  color: #000;\n  background: #fff;\n}\nol,\nul {\n  list-style: none;\n}\ntable {\n  border-collapse: separate;\n  border-spacing: 0;\n  vertical-align: middle;\n}\ncaption,\nth,\ntd {\n  text-align: left;\n  font-weight: normal;\n  vertical-align: middle;\n}\na img {\n  border: none;\n}\nhtml,\nbody {\n  height: 100%;\n}\nbody {\n  background: #16161d;\n  font-family: monospace;\n}\nbody .container {\n  position: relative;\n}\n.card {\n  cursor: pointer;\n  position: absolute;\n  width: 100px;\n  height: 140px;\n  line-height: 140px;\n  font-size: 50px;\n  font-weight: bold;\n  text-align: center;\n  background-color: #fff;\n  color: #000;\n  border-radius: 10px;\n}\n.card.hover {\n  pointer-events: none;\n  color: #f00;\n  z-index: 1;\n}\n", ""]);
 
 /***/ },
 /* 9 */
@@ -991,15 +1116,20 @@
 	          x: 0,
 	          y: 0
 	        },
-	        hover: false
+	        hover: false,
+	        onClick: function(){}
 	      };
 	    },
 	    render: function(){
+	      var this$ = this;
 	      return div({
 	        className: "card " + (this.props.hover ? 'hover' : ''),
 	        style: {
 	          left: this.props.position.x,
 	          top: this.props.position.y
+	        },
+	        onClick: function(){
+	          return this$.props.onClick.apply(this$, arguments);
 	        }
 	      }, this.props.value);
 	    }

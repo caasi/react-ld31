@@ -9,12 +9,14 @@ Card = React.createClass do
       x: 0
       y: 0
     hover: no
+    onClick: ->
   render: ->
     div do
       className: "card #{if @props.hover then 'hover' else ''}"
       style:
         left: @props.position.x
         top:  @props.position.y
+      onClick: ~> @props.onClick ...
       @props.value
 
 module.exports = Card
