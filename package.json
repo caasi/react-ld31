@@ -1,7 +1,7 @@
 {
-  "name": "seed",
-  "version": "0.0.5",
-  "description": "the seed for Jade, Stylus, LiveScript and React apps",
+  "name": "react-ld31",
+  "version": "0.0.1",
+  "description": "Entire Game on One Screen",
   "main": "main.js",
   "scripts": {
     "start": "gulp",
