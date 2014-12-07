@@ -4,6 +4,13 @@ require './app/app.css'
 
 ##
 # model and status
+config =
+  card:
+    width:  100
+    height: 140
+    margin: 20
+  speed: 100
+
 time = 0
 
 nop = (card) -> card
@@ -26,67 +33,71 @@ move = (t0, duration, bgn, end, onEnd) -> (card, t) ->
     hover: yes
     onClick: card.onClick
 
-test-hover = (stack) ->
-  sum = 0
-  for num in stack => sum += num
-  r = sum % 9
-  if r is 0 then 9 else r
+create = ->
+  stack = [1]
+  cards = []
+  movers = []
+  model = { actived: stack.0, stack, cards, movers }
+  swap = (t, i, j, onEnd) ->
+    src = cards[i]
+    dst = cards[j]
+    gap = Math.abs do
+      (src.position.x - dst.position.x) /
+      (config.card.width + config.card.margin)
+    movers[i] = move do
+      t, config.speed * gap
+      src.position
+      dst.position
+      ->
+        movers[i] = nop
+    movers[j] = move do
+      t, config.speed * gap
+      dst.position
+      src.position
+      ->
+        movers[j] = nop
+        onEnd!
+  for let i til 9
+    card =
+      value: i or 9
+      position:
+        x: (config.card.width + config.card.margin) * i
+        y: 0
+      hover: no
+      onClick: ->
+        swap do
+          time
+          i, model.actived
+          ->
+            stack.push i
+            model.actived = (model.actived + i) % 9
+    cards[i]  = card
+    movers[i] = nop
+  model
 
-model =
-  stack: [1]
-  cards: []
-  movers: []
-
-{ stack, cards, movers } = model
-for let i til 9
-  value = i + 1
-  card =
-    value: value
-    position:
-      x: 110 * i
-      y: 100
-    hover: no
-    onClick: ->
-      card = cards[i]
-      j = test-hover(model.stack) - 1
-      another = cards[j]
-      gap = Math.abs (card.position.x - another.position.x) / 110
-      movers[i] = move do
-        time, 100 * gap
-        card.position
-        another.position
-        ->
-          movers[i] = nop
-      movers[j] = move do
-        time, 100 * gap
-        another.position
-        card.position
-        ->
-          movers[j] = nop
-          stack.push card.value
-          console.log stack
-  cards[i]  = card
-  movers[i] = nop
-# shuffle
-for til 100
-  i = Math.floor 8 * Math.random!
-  j = i + 1
-  console.log i, j
-  tmp = cards[i].position
-  cards[i].position = cards[j].position
-  cards[j].position = tmp
+shuffle = ({ cards }) ->
+  for til 100
+    i = Math.floor 8 * Math.random!
+    j = i + 1
+    tmp = cards[i].position
+    cards[i].position = cards[j].position
+    cards[j].position = tmp
 
 ##
 # main
+model = create!
+shuffle model
+
 app = React.render do
   App { model }
   document.getElementById \container
 
 update = (t) ->
+  { cards, movers } = model
   time := t
   for let i til 9
     card = movers[i] cards[i], time
-    card.hover or= card.value is test-hover stack
+    card.hover or= i is model.actived
     cards[i] = card
   app.setProps { model }
   requestAnimationFrame update

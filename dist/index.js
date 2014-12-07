@@ -1,8 +1,16 @@
 (function(){
-  var React, App, time, nop, move, testHover, model, stack, cards, movers, i$, i, j, tmp, app, update;
+  var React, App, config, time, nop, move, create, shuffle, model, app, update;
   React = require('react');
   App = React.createFactory(require('./app/app'));
   require('./app/app.css');
+  config = {
+    card: {
+      width: 100,
+      height: 140,
+      margin: 20
+    },
+    speed: 100
+  };
   time = 0;
   nop = function(card){
     return card;
@@ -35,42 +43,74 @@
       }
     };
   };
-  testHover = function(stack){
-    var sum, i$, len$, num, r;
-    sum = 0;
-    for (i$ = 0, len$ = stack.length; i$ < len$; ++i$) {
-      num = stack[i$];
-      sum += num;
+  create = function(){
+    var stack, cards, movers, model, swap, i$;
+    stack = [1];
+    cards = [];
+    movers = [];
+    model = {
+      actived: stack[0],
+      stack: stack,
+      cards: cards,
+      movers: movers
+    };
+    swap = function(t, i, j, onEnd){
+      var src, dst, gap;
+      src = cards[i];
+      dst = cards[j];
+      gap = Math.abs((src.position.x - dst.position.x) / (config.card.width + config.card.margin));
+      movers[i] = move(t, config.speed * gap, src.position, dst.position, function(){
+        return movers[i] = nop;
+      });
+      return movers[j] = move(t, config.speed * gap, dst.position, src.position, function(){
+        movers[j] = nop;
+        return onEnd();
+      });
+    };
+    for (i$ = 0; i$ < 9; ++i$) {
+      (fn$.call(this, i$));
     }
-    r = sum % 9;
-    if (r === 0) {
-      return 9;
-    } else {
-      return r;
+    return model;
+    function fn$(i){
+      var card;
+      card = {
+        value: i || 9,
+        position: {
+          x: (config.card.width + config.card.margin) * i,
+          y: 0
+        },
+        hover: false,
+        onClick: function(){
+          return swap(time, i, model.actived, function(){
+            stack.push(i);
+            return model.actived = (model.actived + i) % 9;
+          });
+        }
+      };
+      cards[i] = card;
+      movers[i] = nop;
     }
   };
-  model = {
-    stack: [1],
-    cards: [],
-    movers: []
+  shuffle = function(arg$){
+    var cards, i$, i, j, tmp, results$ = [];
+    cards = arg$.cards;
+    for (i$ = 0; i$ < 100; ++i$) {
+      i = Math.floor(8 * Math.random());
+      j = i + 1;
+      tmp = cards[i].position;
+      cards[i].position = cards[j].position;
+      results$.push(cards[j].position = tmp);
+    }
+    return results$;
   };
-  stack = model.stack, cards = model.cards, movers = model.movers;
-  for (i$ = 0; i$ < 9; ++i$) {
-    (fn$.call(this, i$));
-  }
-  for (i$ = 0; i$ < 100; ++i$) {
-    i = Math.floor(8 * Math.random());
-    j = i + 1;
-    console.log(i, j);
-    tmp = cards[i].position;
-    cards[i].position = cards[j].position;
-    cards[j].position = tmp;
-  }
+  model = create();
+  shuffle(model);
   app = React.render(App({
     model: model
   }), document.getElementById('container'));
   update = function(t){
-    var i$;
+    var cards, movers, i$;
+    cards = model.cards, movers = model.movers;
     time = t;
     for (i$ = 0; i$ < 9; ++i$) {
       (fn$.call(this, i$));
@@ -82,38 +122,9 @@
     function fn$(i){
       var card;
       card = movers[i](cards[i], time);
-      card.hover || (card.hover = card.value === testHover(stack));
+      card.hover || (card.hover = i === model.actived);
       cards[i] = card;
     }
   };
   requestAnimationFrame(update);
-  function fn$(i){
-    var value, card;
-    value = i + 1;
-    card = {
-      value: value,
-      position: {
-        x: 110 * i,
-        y: 100
-      },
-      hover: false,
-      onClick: function(){
-        var card, j, another, gap;
-        card = cards[i];
-        j = testHover(model.stack) - 1;
-        another = cards[j];
-        gap = Math.abs((card.position.x - another.position.x) / 110);
-        movers[i] = move(time, 100 * gap, card.position, another.position, function(){
-          return movers[i] = nop;
-        });
-        return movers[j] = move(time, 100 * gap, another.position, card.position, function(){
-          movers[j] = nop;
-          stack.push(card.value);
-          return console.log(stack);
-        });
-      }
-    };
-    cards[i] = card;
-    movers[i] = nop;
-  }
 }).call(this);

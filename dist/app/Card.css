@@ -1,5 +1,6 @@
 .card {
   cursor: pointer;
+  user-select: none;
   position: absolute;
   width: 100px;
   height: 140px;
