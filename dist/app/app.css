@@ -97,11 +97,11 @@ body {
   background: #16161d;
   font-family: monospace;
 }
-body .container {
-  position: relative;
-}
 .card {
   cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   position: absolute;
   width: 100px;
@@ -112,10 +112,25 @@ body .container {
   text-align: center;
   background-color: #fff;
   color: #000;
+  -webkit-border-radius: 10px;
   border-radius: 10px;
+  margin-bottom: 33%;
+}
+.card.disabled {
+  pointer-events: none;
+  color: #666;
 }
 .card.hover {
   pointer-events: none;
   color: #f00;
   z-index: 1;
+}
+.card.pass {
+  pointer-events: none;
+  color: #0f0;
+}
+.app {
+  width: 980px;
+  margin: 0 auto;
+  position: relative;
 }

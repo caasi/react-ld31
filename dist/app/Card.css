@@ -11,9 +11,18 @@
   background-color: #fff;
   color: #000;
   border-radius: 10px;
+  margin-bottom: 33%;
+}
+.card.disabled {
+  pointer-events: none;
+  color: #666;
 }
 .card.hover {
   pointer-events: none;
   color: #f00;
   z-index: 1;
+}
+.card.pass {
+  pointer-events: none;
+  color: #0f0;
 }

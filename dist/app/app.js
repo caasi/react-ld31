@@ -1,15 +1,13 @@
 (function(){
-  var React, Card, div, App;
+  var React, CardList, div, App;
   React = require('react');
-  Card = React.createFactory(require('./Card'));
+  CardList = React.createFactory(require('./CardList'));
   div = React.DOM.div;
   App = React.createClass({
     displayName: 'React.App',
     getDefaultProps: function(){
       return {
-        model: {
-          cards: []
-        }
+        cards: []
       };
     },
     getInitialState: function(){
@@ -18,14 +16,17 @@
       };
     },
     render: function(){
-      var i, props;
+      var i, cards;
       return div({
         className: 'app'
       }, (function(){
         var ref$, results$ = [];
-        for (i in ref$ = this.props.model.cards) {
-          props = ref$[i];
-          results$.push(Card((props.key = i, props)));
+        for (i in ref$ = this.props.cards) {
+          cards = ref$[i];
+          results$.push(CardList({
+            key: i,
+            cards: cards
+          }));
         }
         return results$;
       }.call(this)));

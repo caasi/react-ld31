@@ -1,5 +1,6 @@
-card-width  = 100px
-card-height = 140px
+card-width        = 100px
+card-height       = 140px
+card-margin-right = 10px
 
 .card
   cursor pointer
@@ -14,7 +15,14 @@ card-height = 140px
   background-color #fff
   color #000
   border-radius 10px
+  margin-bottom 33%
+  &.disabled
+    pointer-events none
+    color #666
   &.hover
     pointer-events none
     color #f00
     z-index 1
+  &.pass
+    pointer-events none
+    color #0f0

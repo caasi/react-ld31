@@ -8,7 +8,11 @@ html, body
 body
   background #16161d
   font-family monospace
-  .container
-    position relative
 
 @require 'Card'
+
+.app
+  width (card-width + card-margin-right) * 9 - card-margin-right
+  margin 0 auto
+  position relative
+

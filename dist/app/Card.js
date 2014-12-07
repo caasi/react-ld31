@@ -11,19 +11,21 @@
           y: 0
         },
         hover: false,
-        onClick: function(){}
+        pass: false,
+        onClick: null
       };
     },
     render: function(){
       var this$ = this;
       return div({
-        className: "card " + (this.props.hover ? 'hover' : ''),
+        className: 'card' + (this.props.pass ? ' pass' : '') + (this.props.hover ? ' hover' : '') + (!this.props.onClick ? ' disabled' : ''),
         style: {
           left: this.props.position.x,
           top: this.props.position.y
         },
         onClick: function(){
-          return this$.props.onClick.apply(this$, arguments);
+          var ref$;
+          return typeof (ref$ = this$.props).onClick === 'function' ? ref$.onClick.apply(this$, arguments) : void 8;
         }
       }, this.props.value);
     }
